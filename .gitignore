@@ -5,6 +5,7 @@
 /tmp
 /out-tsc
 /bazel-out
+/nx
 
 # Node
 /node_modules
@@ -27,6 +28,7 @@ yarn-error.log
 !.vscode/launch.json
 !.vscode/extensions.json
 .history/*
+.nx/*
 
 # Miscellaneous
 /.angular/cache
