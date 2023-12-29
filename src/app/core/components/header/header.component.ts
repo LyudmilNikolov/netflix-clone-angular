@@ -18,6 +18,6 @@ export class HeaderComponent {
   userName = ''
   userNameSignal = asSignal(this, 'userName');
   auth = inject(AuthenticationService);
-  navList = ["Home", "TV Shows", "News & Popular", "My List", "Browse by Language"];
+  navList = ["Home", "TV Shows", "Movies", "New & Popular", "My List"];
   trackByNavListId: TrackByFunction<string> = index => index;
 }
