@@ -1,4 +1,5 @@
 import { SocialAuthService } from '@abacritt/angularx-social-login';
+import { Location } from '@angular/common';
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 
@@ -19,7 +20,8 @@ interface GoogleAccount {
 export class AuthenticationService {
   constructor(
     private socialAuthService: SocialAuthService,
-    private router: Router
+    private router: Router,
+    private location: Location
   ) {
     this.initializeAuthStateListener();
   }
@@ -40,8 +42,6 @@ export class AuthenticationService {
   signOut() {
     sessionStorage.removeItem('loggedInUser');
     this.socialAuthService.signOut();
-    const baseHref = document.getElementsByTagName('base')[0].href;
-
-    this.router.navigate([baseHref]);
+    this.location.back();
   }
 }
