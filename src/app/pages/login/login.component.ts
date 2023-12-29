@@ -1,6 +1,6 @@
 import { GoogleSigninButtonModule } from '@abacritt/angularx-social-login';
 import { ChangeDetectionStrategy, Component } from '@angular/core';
-import { AuthenticationService } from '../services/authentication.service';
+import { AuthenticationService } from '../../shared/services/authentication.service';
 
 @Component({
   selector: 'app-login',
