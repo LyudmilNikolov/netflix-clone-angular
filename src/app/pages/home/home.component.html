@@ -1,7 +1,7 @@
-<app-header [userImg]="userProfileImg"></app-header>
+<app-header [userImg]="userProfileImg()" [userName]="userName()"></app-header>
 
 <app-banner [bannerTitle]="(bannerDetail$ | async)?.original_title" [bannerOverview]="(bannerDetail$ | async)?.overview"
-  [key]="(bannerVideo$ | async)?.results[0].key" />
+    [key]="(bannerVideo$ | async)?.results[0].key"/>
 
 <app-movie-carrusel [title]="'Popular on Netflix'" [videoContents]="movies" />
 

@@ -1,7 +1,8 @@
 import { animate, style, transition, trigger } from '@angular/animations';
 import { NgFor, NgIf } from '@angular/common';
-import { AfterViewInit, Component, ElementRef, Input, ViewChild } from '@angular/core';
+import { AfterViewInit, ChangeDetectionStrategy, Component, ElementRef, Input, ViewChild } from '@angular/core';
 import Swiper from 'swiper';
+import { asSignal } from '../../helpers/signal/signal-property.helper';
 import { IVideoContent } from '../../models/video-content.interface';
 import { DescriptionPipe } from '../../pipes/description.pipe';
 import { ImagePipe } from '../../pipes/image.pipe';
@@ -19,18 +20,25 @@ import { ImagePipe } from '../../pipes/image.pipe';
     ])
   ],
   templateUrl: './movie-carrusel.component.html',
-  styleUrl: './movie-carrusel.component.scss'
+  styleUrl: './movie-carrusel.component.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class MovieCarruselComponent implements AfterViewInit {
   @Input() videoContents: IVideoContent[] = [];
-  @Input() title!: string;
+  @Input() 
+  title = ''
+  titleSignal = asSignal(this, 'title');
   @ViewChild('swiperContainer') swiperContainer!: ElementRef;
 
-  selectedContent: string | null = null;
+  selectedContentId: number | null = null;
 
   ngAfterViewInit(): void {
-    //console.log(this.videoContents);
-    this.initSwiper();
+    const checkDataInterval = setInterval(() => {
+      if (this.videoContents.length) {
+        this.initSwiper();
+        clearInterval(checkDataInterval);
+      }
+    }, 100);
   }
 
   private initSwiper() {
@@ -75,10 +83,14 @@ export class MovieCarruselComponent implements AfterViewInit {
   }
 
   setHoverMovie(movie: IVideoContent) {
-    this.selectedContent = movie.title ?? movie.name;
+    this.selectedContentId = movie.id;
   }
 
   clearHoverMovie() {
-    this.selectedContent = null;
+    this.selectedContentId = null;
+  }
+
+  isSelectedContent(movie: IVideoContent): boolean {
+    return movie.id === this.selectedContentId;
   }
 }

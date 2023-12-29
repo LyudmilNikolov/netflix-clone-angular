@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Pipe, PipeTransform } from '@angular/core';
 
 @Pipe({
@@ -6,9 +5,9 @@ import { Pipe, PipeTransform } from '@angular/core';
   standalone: true
 })
 export class DescriptionPipe implements PipeTransform {
-
-  transform(value: string, args?: number): any {
-    return `${value.substring(0, args)}...`
+  transform(value: string, limit: number = 100): string {
+    if (!value) return '';
+    if (value.length <= limit) return value;
+    return `${value.substring(0, limit)}...`;
   }
-
 }

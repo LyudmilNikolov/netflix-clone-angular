@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { AsyncPipe } from '@angular/common';
-import { Component, OnInit, inject } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, inject, signal } from '@angular/core';
 import { Observable, forkJoin, map } from 'rxjs';
 import { BannerComponent } from '../../core/components/banner/banner.component';
 import { HeaderComponent } from '../../core/components/header/header.component';
@@ -9,19 +9,32 @@ import { IVideoContent } from '../../shared/models/video-content.interface';
 import { AuthenticationService } from '../../shared/services/authentication.service';
 import { MovieService } from '../../shared/services/movie.service';
 
+interface Sources {
+  movies: {results: IVideoContent[]},
+  tvShows: {results: IVideoContent[]},
+  ratedMovies: {results: IVideoContent[]},
+  nowPlaying: {results: IVideoContent[]},
+  upcoming: {results: IVideoContent[]},
+  popular: {results: IVideoContent[]},
+  topRated: {results: IVideoContent[]}
+}
+
 @Component({
   selector: 'app-home',
   standalone: true,
   imports: [HeaderComponent, BannerComponent, AsyncPipe, MovieCarruselComponent],
   templateUrl: './home.component.html',
-  //changeDetection: ChangeDetectionStrategy.OnPush
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class HomeComponent implements OnInit {
-  auth = inject(AuthenticationService);
-  movieService = inject(MovieService);
-  name = JSON.parse(sessionStorage.getItem("loggedInUser")!).name;
-  userProfileImg = JSON.parse(sessionStorage.getItem("loggedInUser")!).photoUrl;
-  email = JSON.parse(sessionStorage.getItem("loggedInUser")!).email;
+  private auth = inject(AuthenticationService);
+  private movieService = inject(MovieService);
+  private loggedInUser = JSON.parse(sessionStorage.getItem("loggedInUser")!);
+  private changeDetectorRef = inject(ChangeDetectorRef);
+
+  userName = signal(this.loggedInUser.name);
+  userProfileImg = signal(this.loggedInUser.photoUrl);
+  email = signal(this.loggedInUser.email);
 
   bannerDetail$ = new Observable<any>();
   bannerVideo$ = new Observable<any>();
@@ -52,22 +65,15 @@ export class HomeComponent implements OnInit {
         this.bannerVideo$ = this.movieService.getBannerVideo(movies.results[1].id);
         return {movies, tvShows, ratedMovies, nowPlaying, upcoming, popular, topRated}
       })
-    ).subscribe((res:any)=>{
-      this.movies = res.movies.results as IVideoContent[];
-      this.tvShows = res.tvShows.results as IVideoContent[];
-      this.ratedMovies = res.ratedMovies.results as IVideoContent[];
-      this.nowPlayingMovies = res.nowPlaying.results as IVideoContent[];
-      this.upcomingMovies = res.upcoming.results as IVideoContent[];
-      this.popularMovies = res.popular.results as IVideoContent[];
-      this.topRatedMovies = res.topRated.results as IVideoContent[];
-      this.getMovieKey();
-    })
-  }
-
-  getMovieKey() {
-    this.movieService.getBannerVideo(this.movies[0].id)
-    .subscribe(res=>{
-      console.log(res);
+    ).subscribe((res: Sources)=>{
+      this.movies = res.movies.results;
+      this.tvShows = res.tvShows.results;
+      this.ratedMovies = res.ratedMovies.results;
+      this.nowPlayingMovies = res.nowPlaying.results;
+      this.upcomingMovies = res.upcoming.results;
+      this.popularMovies = res.popular.results;
+      this.topRatedMovies = res.topRated.results;
+      this.changeDetectorRef.markForCheck();
     })
   }
 

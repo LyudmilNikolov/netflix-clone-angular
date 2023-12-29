@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Pipe, PipeTransform } from '@angular/core';
 
 @Pipe({
@@ -7,9 +5,10 @@ import { Pipe, PipeTransform } from '@angular/core';
   standalone: true
 })
 export class ImagePipe implements PipeTransform {
-
-  transform(value: any, args?: any): any {
-    return `https://image.tmdb.org/t/p/w500/${value}`;
+  transform(imagePath: string): string {
+    if (!imagePath || typeof imagePath !== 'string') {
+      return '';
+    }
+    return `https://image.tmdb.org/t/p/w500/${imagePath}`;
   }
-
 }

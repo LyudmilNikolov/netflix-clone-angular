@@ -1,5 +1,5 @@
 import { NgFor } from '@angular/common';
-import { ChangeDetectionStrategy, Component, Input, TrackByFunction, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, Input, TrackByFunction, inject } from '@angular/core';
 import { asSignal } from '../../../shared/helpers/signal/signal-property.helper';
 import { AuthenticationService } from '../../../shared/services/authentication.service';
 
@@ -14,8 +14,9 @@ export class HeaderComponent {
   @Input({required: true}) 
   userImg = ''
   userImgSignal = asSignal(this, 'userImg');
-  username = JSON.parse(sessionStorage.getItem('loggedInUser')!).name;
-  usernameSignal = signal(this.username);
+  @Input({required: true})
+  userName = ''
+  userNameSignal = asSignal(this, 'userName');
   auth = inject(AuthenticationService);
   navList = ["Home", "TV Shows", "News & Popular", "My List", "Browse by Language"];
   trackByNavListId: TrackByFunction<string> = index => index;
