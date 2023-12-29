@@ -40,6 +40,8 @@ export class AuthenticationService {
   signOut() {
     sessionStorage.removeItem('loggedInUser');
     this.socialAuthService.signOut();
-    this.router.navigate(['/']);
+    const baseHref = document.getElementsByTagName('base')[0].href;
+
+    this.router.navigate([baseHref]);
   }
 }
